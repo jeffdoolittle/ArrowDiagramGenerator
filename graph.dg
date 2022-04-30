@@ -1,0 +1,242 @@
+{
+  "format": 1,
+  "restore": {
+    "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Contracts/ActivityDiagram.Contracts.csproj": {}
+  },
+  "projects": {
+    "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Application.Sample/ActivityDiagram.Application.Sample.csproj": {
+      "restore": {
+        "projectUniqueName": "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Application.Sample/ActivityDiagram.Application.Sample.csproj",
+        "projectName": "ActivityDiagram.Application.Sample",
+        "projectPath": "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Application.Sample/ActivityDiagram.Application.Sample.csproj",
+        "packagesPath": "/Users/jeff/.nuget/packages/",
+        "projectStyle": "PackagesConfig",
+        "configFilePaths": [
+          "/Users/jeff/.nuget/NuGet/NuGet.Config"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {},
+          "https://artifactory.trimble.tools/artifactory/api/nuget/trimblecloudplatform-engagement-nuget": {},
+          "https://nuget.pkg.github.com/trimble-oss/index.json": {}
+        },
+        "frameworks": {
+          "net452": {
+            "projectReferences": {
+              "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Contracts/ActivityDiagram.Contracts.csproj": {
+                "projectPath": "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Contracts/ActivityDiagram.Contracts.csproj"
+              },
+              "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Generator/ActivityDiagram.Generator.csproj": {
+                "projectPath": "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Generator/ActivityDiagram.Generator.csproj"
+              },
+              "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Readers.Mpp/ActivityDiagram.Readers.Mpp.csproj": {
+                "projectPath": "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Readers.Mpp/ActivityDiagram.Readers.Mpp.csproj"
+              },
+              "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Readers/ActivityDiagram.Readers.csproj": {
+                "projectPath": "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Readers/ActivityDiagram.Readers.csproj"
+              },
+              "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Writers/ActivityDiagram.Writers.csproj": {
+                "projectPath": "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Writers/ActivityDiagram.Writers.csproj"
+              }
+            }
+          }
+        },
+        "packagesConfigPath": "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Application.Sample/packages.config"
+      },
+      "frameworks": {
+        "net452": {}
+      }
+    },
+    "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Contracts/ActivityDiagram.Contracts.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Contracts/ActivityDiagram.Contracts.csproj",
+        "projectName": "ActivityDiagram.Contracts",
+        "projectPath": "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Contracts/ActivityDiagram.Contracts.csproj",
+        "packagesPath": "/Users/jeff/.nuget/packages/",
+        "outputPath": "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Contracts/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/jeff/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {},
+          "https://artifactory.trimble.tools/artifactory/api/nuget/trimblecloudplatform-engagement-nuget": {},
+          "https://nuget.pkg.github.com/trimble-oss/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/6.0.202/RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Generator/ActivityDiagram.Generator.csproj": {
+      "restore": {
+        "projectUniqueName": "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Generator/ActivityDiagram.Generator.csproj",
+        "projectName": "ActivityDiagram.Generator",
+        "projectPath": "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Generator/ActivityDiagram.Generator.csproj",
+        "packagesPath": "/Users/jeff/.nuget/packages/",
+        "projectStyle": "PackagesConfig",
+        "configFilePaths": [
+          "/Users/jeff/.nuget/NuGet/NuGet.Config"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {},
+          "https://artifactory.trimble.tools/artifactory/api/nuget/trimblecloudplatform-engagement-nuget": {},
+          "https://nuget.pkg.github.com/trimble-oss/index.json": {}
+        },
+        "frameworks": {
+          "net45": {
+            "projectReferences": {
+              "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Contracts/ActivityDiagram.Contracts.csproj": {
+                "projectPath": "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Contracts/ActivityDiagram.Contracts.csproj"
+              },
+              "/Users/jeff/projects/ArrowDiagramGenerator/QuickGraph.TransitiveReduction/QuickGraph.TransitiveReduction.csproj": {
+                "projectPath": "/Users/jeff/projects/ArrowDiagramGenerator/QuickGraph.TransitiveReduction/QuickGraph.TransitiveReduction.csproj"
+              }
+            }
+          }
+        },
+        "packagesConfigPath": "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Generator/packages.config"
+      },
+      "frameworks": {
+        "net45": {}
+      }
+    },
+    "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Readers.Mpp/ActivityDiagram.Readers.Mpp.csproj": {
+      "restore": {
+        "projectUniqueName": "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Readers.Mpp/ActivityDiagram.Readers.Mpp.csproj",
+        "projectName": "ActivityDiagram.Readers.Mpp",
+        "projectPath": "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Readers.Mpp/ActivityDiagram.Readers.Mpp.csproj",
+        "packagesPath": "/Users/jeff/.nuget/packages/",
+        "projectStyle": "PackagesConfig",
+        "configFilePaths": [
+          "/Users/jeff/.nuget/NuGet/NuGet.Config"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {},
+          "https://artifactory.trimble.tools/artifactory/api/nuget/trimblecloudplatform-engagement-nuget": {},
+          "https://nuget.pkg.github.com/trimble-oss/index.json": {}
+        },
+        "frameworks": {
+          "net452": {
+            "projectReferences": {
+              "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Contracts/ActivityDiagram.Contracts.csproj": {
+                "projectPath": "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Contracts/ActivityDiagram.Contracts.csproj"
+              }
+            }
+          }
+        },
+        "packagesConfigPath": "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Readers.Mpp/packages.config"
+      },
+      "frameworks": {
+        "net452": {}
+      }
+    },
+    "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Readers/ActivityDiagram.Readers.csproj": {
+      "restore": {
+        "projectUniqueName": "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Readers/ActivityDiagram.Readers.csproj",
+        "projectName": "ActivityDiagram.Readers",
+        "projectPath": "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Readers/ActivityDiagram.Readers.csproj",
+        "packagesPath": "/Users/jeff/.nuget/packages/",
+        "projectStyle": "PackagesConfig",
+        "configFilePaths": [
+          "/Users/jeff/.nuget/NuGet/NuGet.Config"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {},
+          "https://artifactory.trimble.tools/artifactory/api/nuget/trimblecloudplatform-engagement-nuget": {},
+          "https://nuget.pkg.github.com/trimble-oss/index.json": {}
+        },
+        "frameworks": {
+          "net45": {
+            "projectReferences": {
+              "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Contracts/ActivityDiagram.Contracts.csproj": {
+                "projectPath": "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Contracts/ActivityDiagram.Contracts.csproj"
+              }
+            }
+          }
+        },
+        "packagesConfigPath": "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Readers/packages.config"
+      },
+      "frameworks": {
+        "net45": {}
+      }
+    },
+    "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Writers/ActivityDiagram.Writers.csproj": {
+      "restore": {
+        "projectUniqueName": "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Writers/ActivityDiagram.Writers.csproj",
+        "projectName": "ActivityDiagram.Writers",
+        "projectPath": "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Writers/ActivityDiagram.Writers.csproj",
+        "frameworks": {
+          "net45": {
+            "projectReferences": {
+              "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Contracts/ActivityDiagram.Contracts.csproj": {
+                "projectPath": "/Users/jeff/projects/ArrowDiagramGenerator/ActivityDiagram.Contracts/ActivityDiagram.Contracts.csproj"
+              }
+            }
+          }
+        }
+      },
+      "frameworks": {
+        "net45": {}
+      }
+    },
+    "/Users/jeff/projects/ArrowDiagramGenerator/QuickGraph.TransitiveReduction/QuickGraph.TransitiveReduction.csproj": {
+      "restore": {
+        "projectUniqueName": "/Users/jeff/projects/ArrowDiagramGenerator/QuickGraph.TransitiveReduction/QuickGraph.TransitiveReduction.csproj",
+        "projectName": "QuickGraph.TransitiveReduction",
+        "projectPath": "/Users/jeff/projects/ArrowDiagramGenerator/QuickGraph.TransitiveReduction/QuickGraph.TransitiveReduction.csproj",
+        "packagesPath": "/Users/jeff/.nuget/packages/",
+        "projectStyle": "PackagesConfig",
+        "configFilePaths": [
+          "/Users/jeff/.nuget/NuGet/NuGet.Config"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {},
+          "https://artifactory.trimble.tools/artifactory/api/nuget/trimblecloudplatform-engagement-nuget": {},
+          "https://nuget.pkg.github.com/trimble-oss/index.json": {}
+        },
+        "frameworks": {
+          "net45": {
+            "projectReferences": {}
+          }
+        },
+        "packagesConfigPath": "/Users/jeff/projects/ArrowDiagramGenerator/QuickGraph.TransitiveReduction/packages.config"
+      },
+      "frameworks": {
+        "net45": {}
+      }
+    }
+  }
+}

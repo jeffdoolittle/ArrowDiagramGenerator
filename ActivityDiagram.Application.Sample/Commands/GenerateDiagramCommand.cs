@@ -1,159 +1,145 @@
-﻿using ActivityDiagram.Contracts;
+using ActivityDiagram.Contracts;
 using ActivityDiagram.Generator;
 using ActivityDiagram.Readers.CSV;
 using ActivityDiagram.Readers.Mpp;
 using ActivityDiagram.Writers.Graphml;
 using ActivityDiagram.Writers.Graphviz;
 using ManyConsole;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ActivityDiagram.Application.Sample.Commands
+namespace ActivityDiagram.Application.Sample.Commands;
+
+internal class GenerateDiagramCommand : ConsoleCommand
 {
-    class GenerateDiagramCommand : ConsoleCommand
+    public GenerateDiagramCommand()
     {
-        public GenerateDiagramCommand()
-        {
-            this.IsCommand("gen", "Genreates an arrow diagram from an activity dependency graph.");
+        _ = IsCommand("gen", "Generates an arrow diagram from an activity dependency graph.");
 
-            this.HasOption("it|intype=", "The file type of the input activity dependencies file. Available types: csv, mpp. default: csv", s => { inputType = s ?? "csv"; });
-            this.HasOption("ot|outtype=", "The file type of the output arrow diagram. Available types: graphml, dot. default: graphml", s => { outputType = s ?? "graphml"; });
-            this.HasOption("o|output=", "The output file name. default: '<intput file>.out.type'", s => { outputFile = s ?? ""; });
-            
-            this.HasAdditionalArguments(1, "<input file>");
-        }
+        _ = HasOption("it|intype=", "The file type of the input activity dependencies file. Available types: csv, mpp. default: csv", s => _inputType = s ?? "csv");
+        _ = HasOption("ot|outtype=", "The file type of the output arrow diagram. Available types: graphml, dot. default: graphml", s => _outputType = s ?? "graphml");
+        _ = HasOption("o|output=", "The output file name. default: '<intput file>.out.type'", s => _outputFile = s ?? "");
 
-        private string inputType = "csv";
-        private string inputFile;
-        private string outputType = "graphml";
-        private string outputFile;
-        public override int Run(string[] remainingArguments)
-        {
-            this.CheckRequiredArguments();
-            this.inputType = this.inputType.ToLower();
-            this.outputType = this.outputType.ToLower();
-
-            inputFile = remainingArguments[0];
-            if (String.IsNullOrEmpty(inputFile))
-            {
-                throw new ConsoleHelpAsException(String.Format("The input file name '{0}' is not valid", inputFile));
-            }
-            
-
-            if (String.IsNullOrEmpty(outputFile))
-            {
-                outputFile = inputFile + ".out." + outputType;
-            }
-            
-
-            var reader = GetReaderForType(inputType, inputFile);
-            Console.WriteLine("Using activities input file {0}", inputFile);
-
-            var writer = GetWriterForType(outputType, outputFile);
-            Console.WriteLine("Using arrow diagram output file {0}", outputFile);
-
-            if (writer != null && reader != null)
-            {
-                try
-                {
-                    CreateArrowDiagram(reader, writer);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Unable to generate the diagram. Exception:\n{0}", ex.ToString());
-                    return -1;
-                }
-            }
-            
-            return 0;
-        }
-
-        private void CreateArrowDiagram(IActivitiesReader reader, IArrowGraphWriter writer)
-        {
-
-            Console.WriteLine("Reading activities...", inputFile);
-            var activities = reader.Read();
-            var graphGenerator = new ArrowGraphGenerator(activities);
-            Console.WriteLine("Generating Graph...", outputFile);
-            var arrowGraph = graphGenerator.GenerateGraph();
-            Console.WriteLine("Writing Graph...", inputFile);
-            writer.Write(arrowGraph);
-            Console.WriteLine("Done.", outputFile);
-        }
-
-        private IActivitiesReader GetReaderForType(string type, string intputFile)
-        {
-            try
-            {
-                switch (type)
-                {
-                    case "csv":
-                        return GetCsvReader(inputFile);
-                    case "mpp":
-                        return GetMppReader(inputFile);
-                    default:
-                        throw new ConsoleHelpAsException(String.Format("The input type {0} is not supported", type));
-                }
-            }
-            catch (ConsoleHelpAsException)
-            {
-                throw;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Unable to create reader. Exception:\n{0}", ex.ToString());
-            }
-
-            return null;
-        }
-
-        private IActivitiesReader GetMppReader(string inputFile)
-        {
-            return new MppActivitiesReader(inputFile);
-        }
-
-        private IActivitiesReader GetCsvReader(string inputFile)
-        {
-            return new CSVActivitiesReader(inputFile);
-        }
-
-        IArrowGraphWriter GetWriterForType(string type, string outputFile)
-        {
-            try
-            {
-                switch (type)
-                {
-                    case "graphml":
-                        return GetGraphMLWriter(outputFile);
-                    case "dot":
-                        return GetGraphVizWriter(outputFile);
-                    default:
-                        throw new ConsoleHelpAsException(String.Format("The output type {0} is not supported", outputType));
-                }
-            }
-            catch (ConsoleHelpAsException)
-            {
-                throw;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Unable to create writer. Exception:\n{0}", ex.ToString());
-            }
-
-            return null;
-        }
-
-        private IArrowGraphWriter GetGraphVizWriter(string outputFile)
-        {
-            return new GraphvizArrowGraphWriter(outputFile);
-        }
-
-        private IArrowGraphWriter GetGraphMLWriter(string outputFile)
-        {
-            return new GraphmlArrowGraphWriter(outputFile);
-        }
+        _ = HasAdditionalArguments(1, "<input file>");
     }
+
+    private string _inputType = "csv";
+    private string _inputFile;
+    private string _outputType = "graphml";
+    private string _outputFile;
+    public override int Run(string[] remainingArguments)
+    {
+        CheckRequiredArguments();
+        _inputType = _inputType.ToLower();
+        _outputType = _outputType.ToLower();
+
+        _inputFile = remainingArguments[0];
+        if (string.IsNullOrEmpty(_inputFile))
+        {
+            throw new ConsoleHelpAsException(string.Format("The input file name '{0}' is not valid", _inputFile));
+        }
+
+
+        if (string.IsNullOrEmpty(_outputFile))
+        {
+            _outputFile = _inputFile + ".out." + _outputType;
+        }
+
+
+        var reader = GetReaderForType(_inputType);
+        Console.WriteLine("Using activities input file {0}", _inputFile);
+
+        var writer = GetWriterForType(_outputType, _outputFile);
+        Console.WriteLine("Using arrow diagram output file {0}", _outputFile);
+
+        if (writer != null && reader != null)
+        {
+            try
+            {
+                CreateArrowDiagram(reader, writer);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Unable to generate the diagram. Exception:\n{0}", ex.ToString());
+                return -1;
+            }
+        }
+
+        return 0;
+    }
+
+    private static void CreateArrowDiagram(IActivitiesReader reader, IArrowGraphWriter writer)
+    {
+        Console.WriteLine("Reading activities...");
+        var activities = reader.Read();
+        Console.WriteLine("Calculating critical path and durations...");
+        activities.SetDurations(activity => activity.Predecessors
+                .SelectMany(p => activities.Where(a => a.Activity.Id == p)),
+                a => a.Activity.Duration ?? 0,
+                x =>
+                {
+                    x.Item.EarliestStart = x.DurationInfo.EarliestStart;
+                    x.Item.LatestStart = x.DurationInfo.LatestStart;
+                    x.Item.EarliestFinish = x.DurationInfo.EarliestFinish;
+                    x.Item.LatestFinish = x.DurationInfo.LatestFinish;
+                });
+        Console.WriteLine("Generating Graph...");
+        var graphGenerator = new ArrowGraphGenerator(activities);
+        var arrowGraph = graphGenerator.GenerateGraph();
+        Console.WriteLine("Writing Graph...");
+        writer.Write(arrowGraph);
+        Console.WriteLine("Done.");
+    }
+
+    private IActivitiesReader GetReaderForType(string type)
+    {
+        try
+        {
+            return type switch
+            {
+                "csv" => GetCsvReader(_inputFile),
+                "mpp" => GetMppReader(_inputFile),
+                _ => throw new ConsoleHelpAsException(string.Format("The input type {0} is not supported", type)),
+            };
+        }
+        catch (ConsoleHelpAsException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Unable to create reader. Exception:\n{0}", ex.ToString());
+        }
+
+        return null;
+    }
+
+    private static IActivitiesReader GetMppReader(string inputFile) => new MppActivitiesReader(inputFile);
+
+    private static IActivitiesReader GetCsvReader(string inputFile) => new CSVActivitiesReader(inputFile);
+
+    private IArrowGraphWriter GetWriterForType(string type, string outputFile)
+    {
+        try
+        {
+            return type switch
+            {
+                "graphml" => GetGraphMLWriter(outputFile),
+                "dot" => GetGraphVizWriter(outputFile),
+                _ => throw new ConsoleHelpAsException(string.Format("The output type {0} is not supported", _outputType)),
+            };
+        }
+        catch (ConsoleHelpAsException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Unable to create writer. Exception:\n{0}", ex.ToString());
+        }
+
+        return null;
+    }
+
+    private static IArrowGraphWriter GetGraphVizWriter(string outputFile) => new GraphvizArrowGraphWriter(outputFile);
+
+    private static IArrowGraphWriter GetGraphMLWriter(string outputFile) => new GraphmlArrowGraphWriter(outputFile);
 }

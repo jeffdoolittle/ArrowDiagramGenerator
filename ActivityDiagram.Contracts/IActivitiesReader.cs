@@ -1,15 +1,8 @@
-﻿using ActivityDiagram.Contracts.Model.Activities;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ActivityDiagram.Contracts.Model.Activities;
 
-namespace ActivityDiagram.Contracts
+namespace ActivityDiagram.Contracts;
+
+public interface IActivitiesReader
 {
-    public interface IActivitiesReader
-    {
-        IEnumerable<ActivityDependency> Read();
-    }
+    IEnumerable<ActivityDependency> Read();
 }

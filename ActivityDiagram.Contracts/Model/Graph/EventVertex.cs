@@ -1,82 +1,51 @@
-﻿using ActivityDiagram.Contracts.Model.Activities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ActivityDiagram.Contracts.Model.Activities;
 
-namespace ActivityDiagram.Contracts.Model.Graph
+namespace ActivityDiagram.Contracts.Model.Graph;
+
+public class EventVertex
 {
-    public class EventVertex
+    public int Id { get; private set; }
+    public EventVertexType Type { get; private set; } = EventVertexType.Normal;
+    public Activity MilestoneActivity { get; private set; } = null;
+    public int? EarliestStart { get; set; }
+    public int? LatestStart { get; set; }
+    public int? EarliestFinish { get; set; }
+    public int? LatestFinish { get; set; }
+
+    private EventVertex(int id, EventVertexType vertexType, IDurationInfo durationInfo)
     {
-        public readonly int Id;
-        public readonly EventVertexType Type = EventVertexType.Normal;
-        public readonly Activity MilestoneActivity = null;
-
-        private EventVertex(int id, EventVertexType vertexType)
-        {
-            this.Id = id;
-            this.Type = vertexType;
-        }
-
-        private EventVertex(int id, Activity milestoneActivity) : this(id, EventVertexType.Milestone)
-        {
-            this.MilestoneActivity = milestoneActivity;
-        }
-
-        public bool IsMilestone
-        {
-            get
-            {
-                return MilestoneActivity != null;
-            }
-        }
-
-        public override bool Equals(Object obj)
-        {
-            return obj is EventVertex && this == (EventVertex)obj;
-        }
-        public override int GetHashCode()
-        {
-            return Id.GetHashCode() ^ Type.GetHashCode();
-        }
-        public static bool operator ==(EventVertex x, EventVertex y)
-        {
-            return x.Id == y.Id;
-        }
-        public static bool operator !=(EventVertex x, EventVertex y)
-        {
-            return !(x == y);
-        }
-
-        #region Factory Methods
-        public static EventVertex CreateMilestone(int id, Activity milestoneActivity)
-        {
-            return new EventVertex(id, milestoneActivity);
-        }
-
-        public static EventVertex CreateGraphStart(int id)
-        {
-            return new EventVertex(id, EventVertexType.GraphStart);
-        }
-
-        public static EventVertex CreateGraphEnd(int id)
-        {
-            return new EventVertex(id, EventVertexType.GraphEnd);
-        }
-
-        public static EventVertex Create(int id)
-        {
-            return new EventVertex(id, EventVertexType.Normal);
-        }
-        #endregion
+        Id = id;
+        Type = vertexType;
+        EarliestStart = durationInfo?.EarliestStart;
+        LatestStart = durationInfo?.LatestStart;
+        EarliestFinish = durationInfo?.EarliestFinish;
+        LatestFinish = durationInfo?.LatestFinish;
     }
 
-    public enum EventVertexType
-    {
-        Normal,
-        GraphStart,
-        GraphEnd,
-        Milestone
-    }
+    private EventVertex(int id, Activity milestoneActivity) : this(id, EventVertexType.Milestone, null) => MilestoneActivity = milestoneActivity;
+
+    public bool IsMilestone => MilestoneActivity != null;
+
+    public override bool Equals(object obj) => obj is EventVertex vertex && this == vertex;
+    public override int GetHashCode() => Id.GetHashCode() ^ Type.GetHashCode();
+    public static bool operator ==(EventVertex x, EventVertex y) => x.Id == y.Id;
+    public static bool operator !=(EventVertex x, EventVertex y) => !(x == y);
+
+    #region Factory Methods
+    public static EventVertex CreateMilestone(int id, Activity milestoneActivity) => new(id, milestoneActivity);
+
+    public static EventVertex CreateGraphStart(int id, IDurationInfo durationInfo) => new(id, EventVertexType.GraphStart, durationInfo);
+
+    public static EventVertex CreateGraphEnd(int id, IDurationInfo durationInfo) => new(id, EventVertexType.GraphEnd, durationInfo);
+
+    public static EventVertex Create(int id, IDurationInfo durationInfo) => new(id, EventVertexType.Normal, durationInfo);
+    #endregion
+}
+
+public enum EventVertexType
+{
+    Normal,
+    GraphStart,
+    GraphEnd,
+    Milestone
 }

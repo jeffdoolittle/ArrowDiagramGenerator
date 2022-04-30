@@ -1,108 +1,116 @@
-﻿using ActivityDiagram.Contracts;
+using System.Globalization;
+using ActivityDiagram.Contracts;
 using ActivityDiagram.Contracts.Model.Activities;
 using ActivityDiagram.Readers.CSV.Model;
 using CsvHelper;
 using CsvHelper.Configuration;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ActivityDiagram.Readers.CSV
+namespace ActivityDiagram.Readers.CSV;
+
+public class CSVActivitiesReader : IActivitiesReader, IDisposable
 {
-    public class CSVActivitiesReader : IActivitiesReader, IDisposable
+    private readonly CsvParser _csvParser;
+    private readonly CsvReader _csvReader;
+
+    public CSVActivitiesReader(string filename)
     {
-        private readonly CsvReader csvReader;
-        private readonly string filename;
-
-        public CSVActivitiesReader(string filename)
-        {
-            this.filename = filename;
-            csvReader = new CsvReader(new StreamReader(filename));
-            csvReader.Configuration.RegisterClassMap<ActivityRowMap>();
-        }
-
-        public IEnumerable<ActivityDependency> Read()
-        {
-            var rows = csvReader.GetRecords<ActivityRow>();
-
-            return rows.Select(actrow =>
-                new ActivityDependency(
-                    new Activity(actrow.ActivityId, actrow.ActivityDuration, actrow.ActivityTotalSlack),
-                    actrow.Predecessors)).ToList();
-        }
-
-        public void Dispose()
-        {
-            if (csvReader != null)
-            {
-                csvReader.Dispose();
-            }
-        }
+        var config = new CsvConfiguration(CultureInfo.InvariantCulture);
+        _csvParser = new CsvParser(new StreamReader(filename), config);
+        _csvReader = new CsvReader(_csvParser);
+        _ = _csvReader.Context.RegisterClassMap<ActivityRowMap>();
     }
 
-    internal sealed class ActivityRowMap : CsvClassMap<ActivityRow>
+    public IEnumerable<ActivityDependency> Read()
     {
-        public ActivityRowMap()
+        var rows = _csvReader.GetRecords<ActivityRow>().ToList();
+
+        var successors = new Dictionary<int, List<int>>();
+
+        foreach(var id in rows.Select(r => r.ActivityId))
         {
-            Map(m => m.ActivityId).Name("ID");
-            Map(m => m.Predecessors).ConvertUsing(ParsePredecessorsIntList);
-            Map(m => m.ActivityDuration).ConvertUsing(ParseDuration);
-            Map(m => m.ActivityTotalSlack).ConvertUsing(ParseTotalSlack);
+            var matches = rows.Where(x => x.Predecessors.Contains(id));
+            successors.Add(id, matches.Select(x => x.ActivityId).ToList());
         }
 
-        List<int> ParsePredecessorsIntList(ICsvReaderRow row)
+        var activityDependencies = rows.Select(actrow =>
+            new ActivityDependency(
+                new Activity(actrow.ActivityId, actrow.ActivityDuration, actrow.ActivityTotalSlack, actrow.ActivityName),
+                actrow.Predecessors, successors[actrow.ActivityId])).ToList();
+
+        return activityDependencies;
+    }
+
+    public void Dispose()
+    {
+        if (_csvReader != null)
         {
-            return ParseIntList(row, "Predecessors");
+            _csvReader.Dispose();
         }
 
-        int? ParseDuration(ICsvReaderRow row)
+        GC.SuppressFinalize(this);
+    }
+}
+
+internal sealed class ActivityRowMap : ClassMap<ActivityRow>
+{
+    public ActivityRowMap()
+    {
+        _ = Map(m => m.ActivityId).Name("ID");
+        _ = Map(m => m.Predecessors).Convert(ParsePredecessorsIntList);
+        _ = Map(m => m.ActivityDuration).Convert(ParseDuration);
+        _ = Map(m => m.ActivityTotalSlack).Convert(ParseTotalSlack);
+        _ = Map(m => m.ActivityName).Name("Name");
+    }
+
+    private List<int> ParsePredecessorsIntList(ConvertFromStringArgs args) => ParseIntList(args.Row, "Predecessors");
+
+    private int? ParseDuration(ConvertFromStringArgs args) => ParseSafeIntegerValuesWithSuffix(args.Row, "Duration", "days");
+
+    private int? ParseTotalSlack(ConvertFromStringArgs args) => ParseSafeIntegerValuesWithSuffix(args.Row, "Total_Slack", "days");
+
+    private static List<int> ParseIntList(IReaderRow row, string fieldName)
+    {
+        var stringList = row.GetField<string>(fieldName).Trim();
+        if (string.IsNullOrEmpty(stringList))
         {
-            return ParseSafeIntegerValuesWithSuffix(row, "Duration", "days");
+            return new List<int>();
         }
 
-        int? ParseTotalSlack(ICsvReaderRow row)
+        return stringList.Split(',')
+            .Select(sId => int.Parse(sId))
+            .ToList();
+    }
+
+    private static int? ParseSafeIntegerValuesWithSuffix(IReaderRow row, string fieldName, string suffix)
+    {
+        var stringValue = row.GetField<string>(fieldName).Trim();
+        if (string.IsNullOrEmpty(stringValue))
         {
-            return ParseSafeIntegerValuesWithSuffix(row, "Total Slack", "days");
-        }
+            stringValue = row.GetField<string>(fieldName).Trim().Replace('_', ' ');
 
-        List<int> ParseIntList(ICsvReaderRow row, string fieldName)
-        {
-            var stringList = row.GetField<string>(fieldName).Trim();
-            if (String.IsNullOrEmpty(stringList)) return new List<int>();
-
-            return stringList.Split(',')
-                .Select(sId => Int32.Parse(sId))
-                .ToList();
-        }
-
-        int? ParseSafeIntegerValuesWithSuffix(ICsvReaderRow row, string fieldName, string suffix)
-        {
-            var stringValue = row.GetField<string>(fieldName).Trim();
-            if (String.IsNullOrEmpty(stringValue)) return null;
-
-            try
-            {
-                var startIndexOfSuffix = stringValue.ToLowerInvariant().IndexOf(suffix);
-                if (startIndexOfSuffix > 0)
-                {
-                    stringValue = stringValue.Substring(0, startIndexOfSuffix).Trim();
-                }
-            }
-            catch { }
-
-            int integerValue;
-            if (Int32.TryParse(stringValue, out integerValue))
-            {
-                return integerValue;
-            }
-            else
+            if (string.IsNullOrEmpty(stringValue))
             {
                 return null;
             }
+        }
+
+        try
+        {
+            var startIndexOfSuffix = stringValue.ToLowerInvariant().IndexOf(suffix);
+            if (startIndexOfSuffix > 0)
+            {
+                stringValue = stringValue[..startIndexOfSuffix].Trim();
+            }
+        }
+        catch { }
+
+        if (int.TryParse(stringValue, out var integerValue))
+        {
+            return integerValue;
+        }
+        else
+        {
+            return null;
         }
     }
 }

@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+namespace ActivityDiagram.Writers.Graphml.Model;
 
-namespace ActivityDiagram.Writers.Graphml.Model
+public class GraphmlNodeBuilder
 {
-    public class GraphmlNodeBuilder
+    public static graphmlGraphNode BuildNormal(string id)
     {
-        public static graphmlGraphNode BuildNormal(string id)
+        var node = new graphmlGraphNode
         {
-            var node = new graphmlGraphNode();
-            node.id = id;
-            node.data = new data()
+            id = id,
+            data = new data()
             {
                 key = "d6",
                 ShapeNode = new ShapeNode()
@@ -43,27 +38,27 @@ namespace ActivityDiagram.Writers.Graphml.Model
                     }
                 }
 
-            };
+            }
+        };
 
-            return node;
-        }
+        return node;
+    }
 
-        public static graphmlGraphNode BuildTerminator(string id)
-        {
-            var node = BuildNormal(id);
-            node.data.ShapeNode.Fill.hasColor = "true";
-            node.data.ShapeNode.Fill.color = "#000000";
+    public static graphmlGraphNode BuildTerminator(string id)
+    {
+        var node = BuildNormal(id);
+        node.data.ShapeNode.Fill.hasColor = "true";
+        node.data.ShapeNode.Fill.color = "#000000";
 
-            return node;
-        }
+        return node;
+    }
 
-        public static graphmlGraphNode BuildMilestone(string id, string label)
-        {
-            var node = BuildNormal(id);
-            node.data.ShapeNode.NodeLabel.Text = label;
-            node.data.ShapeNode.NodeLabel.hasText = "true";
+    public static graphmlGraphNode BuildMilestone(string id, string label)
+    {
+        var node = BuildNormal(id);
+        node.data.ShapeNode.NodeLabel.Text = label;
+        node.data.ShapeNode.NodeLabel.hasText = "true";
 
-            return node;
-        }
+        return node;
     }
 }

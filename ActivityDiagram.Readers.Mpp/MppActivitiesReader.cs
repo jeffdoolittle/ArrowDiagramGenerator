@@ -1,55 +1,59 @@
-﻿using ActivityDiagram.Contracts;
+using ActivityDiagram.Contracts;
 using ActivityDiagram.Contracts.Model.Activities;
 using net.sf.mpxj;
-using net.sf.mpxj.reader;
 using net.sf.mpxj.MpxjUtilities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using net.sf.mpxj.reader;
 
-namespace ActivityDiagram.Readers.Mpp
+namespace ActivityDiagram.Readers.Mpp;
+
+public class MppActivitiesReader : IActivitiesReader
 {
-    public class MppActivitiesReader : IActivitiesReader
+    private readonly string _filename;
+
+    public MppActivitiesReader(string filename) => _filename = filename;
+    public IEnumerable<ActivityDependency> Read()
     {
-        private readonly string filename;
+        var reader = ProjectReaderUtility.getProjectReader(_filename);
+        var mpx = reader.read(_filename);
 
-        public MppActivitiesReader(string filename)
+
+        var actDependnecies = new List<ActivityDependency>();
+        foreach (net.sf.mpxj.Task task in mpx.Tasks.ToIEnumerable())
         {
-            this.filename = filename;
-        }
-        public IEnumerable<ActivityDependency> Read()
-        {
-            ProjectReader reader = ProjectReaderUtility.getProjectReader(filename);
-            ProjectFile mpx = reader.read(filename);
+            var id = task.ID.intValue();
+            var duration = task.Duration.Duration;
+            var totalSlack = task.TotalSlack.Duration;
+            var name = task.Name;
 
-
-            var actDependnecies = new List<ActivityDependency>();
-            foreach (net.sf.mpxj.Task task in mpx.AllTasks.ToIEnumerable())
+            var predecessors = new List<int>();
+            var preds = task.Predecessors;
+            if (preds != null && !preds.isEmpty())
             {
-                var id = task.ID.intValue();
-                var duration = task.Duration.Duration;
-                var totalSlack = task.TotalSlack.Duration;
-
-                var predecessors = new List<int>();
-                var preds = task.Predecessors;
-                if (preds != null && !preds.isEmpty())
+                foreach (Relation pred in preds.ToIEnumerable())
                 {
-                    foreach (Relation pred in preds.ToIEnumerable())
-                    {
-                        predecessors.Add(pred.TargetTask.ID.intValue());
-                    }
+                    predecessors.Add(pred.TargetTask.ID.intValue());
                 }
-
-                actDependnecies.Add(
-                    new ActivityDependency(
-                        new Activity(id, Convert.ToInt32(duration), Convert.ToInt32(totalSlack)), predecessors
-                        )
-                    );
             }
 
-            return actDependnecies;
+            var successors = new List<int>();
+            var succs = task.Successors;
+            if (succs != null && !succs.isEmpty())
+            {
+                foreach (Relation succ in succs.ToIEnumerable())
+                {
+                    successors.Add(succ.TargetTask.ID.intValue());
+                }
+            }
+
+            actDependnecies.Add(
+                new ActivityDependency(
+                    new Activity(id, Convert.ToInt32(duration), Convert.ToInt32(totalSlack), name),
+                        predecessors,
+                        successors
+                    )
+                );
         }
+
+        return actDependnecies;
     }
 }

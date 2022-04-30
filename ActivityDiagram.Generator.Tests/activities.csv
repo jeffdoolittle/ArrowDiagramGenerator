@@ -1,0 +1,53 @@
+ID,Predecessors,Duration,Total_Slack,Name
+1,,0 days,0 days,Start
+2,1,15 days,15 days,Requirements
+3,1,15 days,0 days,Architecture
+4,3,10 days,0 days,Project Planning
+5,4,5 days,0 days,Management Education
+6,"5,2",0 days,0 days,SDP Review
+7,17,10 days,45 days,UX Design
+8,6,5 days,0 days,Dev Training
+9,8,25 days,70 days,Test Plan
+10,9,25 days,70 days,Test Harness
+11,6,10 days,15 days,CM and setup
+12,7,20 days,45 days,UI Design
+13,12,20 days,60 days,Manual
+14,8,10 days,10 days,Logging
+15,8,15 days,5 days,Message Bus
+16,8,20 days,0 days,Security
+17,"16,15,14,11",0 days,0 days,Infrastructure Done
+18,17,5 days,5 days,Payments DB
+19,17,5 days,5 days,Members DB
+20,17,5 days,10 days,Projects DB
+21,17,5 days,10 days,Contractors DB
+22,"17,18",5 days,5 days,Education DB
+23,17,15 days,0 days,Workflows Repository
+24,"17,19",5 days,5 days,Regulations DB
+25,"18,19,20,21,22,23,24",0 days,0 days,DB Done
+26,"25,37",10 days,50 days,Data Migration
+27,25,10 days,0 days,Payments Access
+28,25,10 days,0 days,Members Access
+29,25,10 days,0 days,Projects Access
+30,"25,27",10 days,0 days,Contractors Access
+31,"25,28",10 days,0 days,Education Access
+32,25,20 days,0 days,Workflows Access
+33,"25,29",10 days,0 days,Regulations Access
+34,"27,28,29,30,31,32,33",0 days,0 days,RA Done
+35,34,30 days,0 days,Regulations Engine A
+36,34,15 days,15 days,Regulations Engine B
+37,34,15 days,15 days,Search Engine
+38,"35,36,37",0 days,0 days,Emgines Done
+39,34,30 days,0 days,Abstract Manager
+40,"34,38,39",10 days,0 days,Membership Manager
+41,"34,38,39",10 days,0 days,Market Manager
+42,"34,38,39",10 days,0 days,Education Manager
+43,"34,38,39",10 days,0 days,Regression Test Harness
+44,"40,41,42,43",0 days,0 days,Managers Complete
+45,"12,44",15 days,10 days,Members Portal
+46,"12,44",15 days,10 days,Contractors Portal
+47,"12,44",10 days,15 days,Education Portal
+48,"12,44",25 days,0 days,Marketplace App
+49,"45,46,47,48",0 days,0 days,Clients Complete
+50,49,10 days,0 days,Manual Polishing
+51,"10,49",10 days,0 days,System Testing
+52,"26,13,51,50",10 days,0 days,System Rollout

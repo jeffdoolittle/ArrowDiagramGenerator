@@ -1,64 +1,92 @@
-﻿using ActivityDiagram.Contracts;
-using ActivityDiagram.Contracts.Model.Graph;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using ActivityDiagram.Contracts;
+using ActivityDiagram.Contracts.Model.Graph;
 
-namespace ActivityDiagram.Writers.Graphviz
+namespace ActivityDiagram.Writers.Graphviz;
+
+public class GraphvizArrowGraphWriter : IArrowGraphWriter
 {
-    public class GraphvizArrowGraphWriter : IArrowGraphWriter
+    private readonly string _filename;
+    public GraphvizArrowGraphWriter(string filename) => _filename = filename;
+
+    private class Node
     {
-        private readonly string filename;
-        public GraphvizArrowGraphWriter(string filename)
+        public int Id { get; set; }
+    }
+
+    public void Write(ActivityArrowGraph graph)
+    {
+        var sb = new StringBuilder();
+
+        _ = sb.Append("digraph Arrow {\nrankdir=LR;\n");
+        // change to oval once vertex calculations are fixed. see below.
+        // _ = sb.Append("node [ shape=oval height=.3 width=.1 style=filled fillcolor=\"#e7e7e7\" fontsize=8 fontname=\"Sans-Serif\" penwidth=0 ]\n");
+        _ = sb.Append("node [ shape=circle height=.4 width=.4 style=filled fillcolor=\"#e7e7e7\" fontsize=8 fontname=\"Sans-Serif\" penwidth=0 ]\n");
+        foreach (var vertex in graph.Vertices)
         {
-            this.filename = filename;
+            // need to fis the vertex calculations
+            // var node = $"N{vertex.Id} [ label=\"{vertex.EarliestFinish} | {vertex.LatestFinish}\" ];\n";
+            var node = $"N{vertex.Id} [ label=\"\" ];\n";
+            _ = sb.Append(node);
         }
 
-        public void Write(ActivityArrowGraph graph)
+        foreach (var edge in graph.Edges)
         {
-            StringBuilder sb = new StringBuilder();
+            var penWidth = "1";
 
-            sb.Append("digraph G {\n");
-            foreach (var vertex in graph.Vertices)
+            if (edge.Activity != null)
             {
-                if (vertex.Type == EventVertexType.GraphEnd || vertex.Type == EventVertexType.GraphStart)
+                var slack = edge.Activity.TotalSlack;
+                var edgeColor = "darkgreen";
+                var style = "solid";
+                if (edge.Activity.Duration == 0)
                 {
-                    sb.AppendFormat("{0} [ label=\"\" style=filled fillcolor=black ];\n", vertex.Id);
+                    edgeColor = "black";
+                    style = "dotted";
                 }
                 else
                 {
-                    sb.AppendFormat("{0} [ label=\"\" ];\n", vertex.Id);
+                    if (slack < 1)
+                    {
+                        edgeColor = "black";
+                        penWidth = "2";
+                    }
+                    else if (slack < 10)
+                    {
+                        edgeColor = "red";
+                    }
+                    else if (slack < 25)
+                    {
+                        edgeColor = "orange";
+                    }
                 }
+
+                var tooltip = edge.Activity.Name;
+
+                var labelBuilder = new StringBuilder();
+                _ = labelBuilder.Append(edge.Activity.Id);
+                if (edge.Activity.Duration > 0)
+                {
+                    _ = labelBuilder.Append($" ({edge.Activity.Duration})");
+                    if (edge.Activity.TotalSlack > 0)
+                    {
+                        _ = labelBuilder.Append($"\n{edge.Activity.TotalSlack}");
+                    }
+                }
+
+                var activity = $"N{edge.Source.Id} -> N{edge.Target.Id} [ id={edge.Activity.Id} style={style} edgetooltip=\"{tooltip}\" labeltooltip=\"{tooltip}\" penwidth=\"{penWidth}\" color=\"{edgeColor}\" fontsize=8 fontname=\"Sans-Serif\" label=\"{labelBuilder}\" ];\n";
+
+                _ = sb.AppendFormat(activity);
             }
-
-            foreach (var edge in graph.Edges)
+            else
             {
-                var penWidth = "1";
-                if (edge.IsCritical)
-                {
-                    penWidth = "3";
-                }
-
-                if (edge.Activity != null)
-                {
-                    sb.AppendFormat("{0} -> {1} [ id={2} label={2} penwidth=\"{3}\" ];\n", edge.Source.Id, edge.Target.Id, edge.Activity.Id, penWidth);
-                    
-                }
-                else
-                {
-                    sb.AppendFormat("{0} -> {1} [ style=dashed penwidth=\"{2}\" ];\n", edge.Source.Id, edge.Target.Id, penWidth);
-                }
-            }
-            sb.Append("}");
-
-            using (var fwriter = File.Create(filename))
-            {
-                Byte[] info = new UTF8Encoding(true).GetBytes(sb.ToString());
-                fwriter.Write(info, 0, info.Length);
+                _ = sb.AppendFormat("N{0} -> N{1} [ style=dashed penwidth=\"{2}\" fontsize=8 fontname=\"Sans-Serif\" ];\n", edge.Source.Id, edge.Target.Id, penWidth);
             }
         }
+        _ = sb.Append('}');
+
+        using var fileWriter = File.Create(_filename);
+        var info = new UTF8Encoding(true).GetBytes(sb.ToString());
+        fileWriter.Write(info, 0, info.Length);
     }
 }
